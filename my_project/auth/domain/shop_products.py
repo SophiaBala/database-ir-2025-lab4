@@ -21,3 +21,4 @@ class ShopProducts(db.Model):
             "last_delivery_date": self.last_delivery_date.isoformat(),
             "quantity": self.quantity,
         }
+    

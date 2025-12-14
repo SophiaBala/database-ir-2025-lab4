@@ -9,7 +9,7 @@ class Products(db.Model):
     characteristic = db.Column(db.String(100), nullable=False)
     price = db.Column(db.Integer, nullable=False)
 
-    category_id = db.Column(db.Integer, db.ForeignKey('categories.idcategories', ondelete='CASCADE'))
+    categories_idcategories = db.Column(db.Integer, db.ForeignKey('categories.idcategories', ondelete='CASCADE'))
 
     shop_products = db.relationship("ShopProducts", backref="product", cascade="all, delete-orphan")
 

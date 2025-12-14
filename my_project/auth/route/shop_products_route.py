@@ -1,5 +1,10 @@
 from flask import Blueprint, request, jsonify
 from my_project.auth.service.shop_products_service import ShopProductsService
+from my_project.auth.domain.shop_products import ShopProducts
+from my_project.auth.domain.shop import Shop
+from my_project.auth.domain.products import Products
+from my_project import db
+
 
 shop_products_bp = Blueprint('shop_products_bp', __name__)
 
@@ -78,3 +83,35 @@ def delete_shop(shop_id):
     if shop:
         return jsonify({"message": "Shop deleted"})
     return jsonify({"error": "Shop not found"}), 404
+
+
+@shop_products_bp.route('/add_shop_product', methods=['POST'])
+def add_shop_product():
+    data = request.get_json()
+
+    shop_id = data.get("shop_id")
+    product_id = data.get("product_id")
+    expire_date = data.get("expire_date")
+    last_delivery_date = data.get("last_delivery_date")
+    quantity = data.get("quantity")
+
+    shop = Shop.query.filter_by(idshop=shop_id).first()
+    if not shop:
+        return jsonify({"error": "Shop not found"}), 400
+
+    product = Products.query.filter_by(idproducts=product_id).first()
+    if not product:
+        return jsonify({"error": "Product not found"}), 400
+
+    shop_product = ShopProducts(
+        shop_idshop=shop.idshop,
+        products_idproducts=product.idproducts,
+        expire_date=expire_date,
+        last_delivery_date=last_delivery_date,
+        quantity=quantity
+    )
+
+    db.session.add(shop_product)
+    db.session.commit()
+
+    return jsonify({"message": "Inserted successfully"}), 201
